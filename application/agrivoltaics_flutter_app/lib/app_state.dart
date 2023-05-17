@@ -16,6 +16,7 @@ class AppState extends ChangeNotifier {
   
   // Settings
   late tz.Location timezone;
+  List<int> sites = [];
 
   // Notifications
   List<AppNotification> notifications = [];

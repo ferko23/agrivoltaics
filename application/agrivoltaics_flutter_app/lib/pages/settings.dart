@@ -70,10 +70,16 @@ class _SettingState extends State<Setting> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              for (int site = 1; site <= AppConstants.numSites; site++)...[
+              const Padding( // Assuming that there is always going to be at least one site, populate the first site to always show
+                padding: EdgeInsets.all(8.0),
+                child: SiteCheckbox(
+                  site: 1, 
+                  initVal: true)
+              ),
+              for (int site = 2; site <= AppConstants.numSites; site++)...[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SiteCheckbox(),),
+                  child: SiteCheckbox(site: site),),
               ]
           ],
           )
@@ -85,24 +91,52 @@ class _SettingState extends State<Setting> {
 }
 
 class SiteCheckbox extends StatefulWidget{
-  const SiteCheckbox({super.key});
+  const SiteCheckbox({
+    super.key,
+    required this.site,
+    this.initVal = false});
+   final int site;
+   final bool initVal;
   @override
   State<SiteCheckbox> createState() => _SiteCheckboxState();
 }
 
 class _SiteCheckboxState extends State<SiteCheckbox>{
-  bool isChecked = false;
-
+  late bool isChecked;
+  @override
+  void initState(){
+    isChecked = widget.initVal;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context){
-    return Checkbox(
-      checkColor: Colors.black,
-      value: isChecked,
-      onChanged: (bool? value){
-        setState((){
-          isChecked = value!;
-        });
-      }
+    var appState = context.watch<AppState>();
+    return 
+    Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Text('Site ${widget.site}'),
+          Checkbox(
+            checkColor: Colors.black,
+            value: isChecked,
+            onChanged: (bool? value){
+              setState((){
+                isChecked = value!;
+              });
+              if (appState.sites.contains(widget.site)){
+                if (!isChecked){
+                  appState.sites.remove(widget.site);
+                }
+              }else{
+                if (isChecked){
+                  appState.sites.add(widget.site);
+                }
+              }
+            }
+          ),
+        ]
+      )
     );
   }
 }
