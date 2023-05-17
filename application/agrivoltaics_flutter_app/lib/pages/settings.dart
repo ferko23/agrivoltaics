@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+import '../app_constants.dart';
+
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -10,7 +12,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -42,7 +44,7 @@ class _SettingState extends State<Setting> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Timezone:'),
+          const Text('Timezone:'),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: DropdownButton(
@@ -62,9 +64,45 @@ class _SettingState extends State<Setting> {
               },
               value: dropdownValue
             )
+          ),
+          const Text('Sites:'),
+          Padding(padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (int site = 1; site <= AppConstants.numSites; site++)...[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SiteCheckbox(),),
+              ]
+          ],
+          )
           )
         ],
       ),
+    );
+  }
+}
+
+class SiteCheckbox extends StatefulWidget{
+  const SiteCheckbox({super.key});
+  @override
+  State<SiteCheckbox> createState() => _SiteCheckboxState();
+}
+
+class _SiteCheckboxState extends State<SiteCheckbox>{
+  bool isChecked = false;
+
+  @override
+  Widget build(BuildContext context){
+    return Checkbox(
+      checkColor: Colors.black,
+      value: isChecked,
+      onChanged: (bool? value){
+        setState((){
+          isChecked = value!;
+        });
+      }
     );
   }
 }
